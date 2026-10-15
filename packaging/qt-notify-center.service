@@ -1,0 +1,11 @@
+[Unit]
+Description=Qt Notify Center
+After=dbus.service
+
+[Service]
+Type=simple
+ExecStart=qt-notify-center
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

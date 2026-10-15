@@ -1,0 +1,80 @@
+name: Build Qt Notify Center
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build on Ubuntu
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            build-essential \
+            cmake \
+            ninja-build \
+            qt6-base-dev \
+            qt6-base-dev-tools \
+            qt6-tools-dev \
+            qt6-tools-dev-tools \
+            libqt6dbus6
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --parallel 2
+
+      - name: Stage binaries and runtime metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifact/bin artifact/share/applications
+          install -m 0755 build/qt-notify-center artifact/bin/
+          install -m 0755 build/qt-notify-centerctl artifact/bin/
+          install -m 0644 packaging/qt-notify-center.desktop artifact/share/applications/
+          install -m 0644 config/config.ini.example artifact/config.ini.example
+          cat > artifact/README.txt <<'EOF'
+          Qt Notify Center CI build
+
+          Binaries:
+            bin/qt-notify-center       Notification daemon and panel
+            bin/qt-notify-centerctl    CLI control tool
+
+          Runtime requirements:
+            - Compatible Linux system
+            - Qt 6 runtime libraries: Core, Gui, Widgets, DBus
+            - Session D-Bus
+
+          Run the daemon:
+            ./bin/qt-notify-center
+
+          Run the control tool:
+            ./bin/qt-notify-centerctl --status
+
+          Copy config.ini.example to:
+            ~/.config/qt-notify-center/config.ini
+
+          This artifact is built on Ubuntu 24.04 and is not a statically linked,
+          distribution-independent binary.
+          EOF
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt-notify-center-linux-x86_64
+          path: artifact/
+          if-no-files-found: error
+          retention-days: 14

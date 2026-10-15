@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Qt Notify Center
+Comment=Qt 6 notification center for Wayland desktops
+Exec=qt-notify-center
+Terminal=false
+Categories=Utility;
+StartupNotify=false

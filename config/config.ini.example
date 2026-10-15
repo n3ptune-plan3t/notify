@@ -1,0 +1,28 @@
+; Qt Notify Center configuration
+; Copy to ~/.config/qt-notify-center/config.ini and restart the daemon.
+
+[ui]
+; Notification history panel size, logical pixels.
+panelWidth=410
+panelHeight=640
+background=#17191f
+card=#242832
+foreground=#f1f2f6
+secondary=#aab0bf
+border=#343843
+urgentBackground=#3a252b
+urgentBorder=#a84e60
+
+[popup]
+; New notifications create solid, persistent top-level windows.
+enabled=true
+persistent=true
+width=360
+margin=12
+gap=10
+; top-right, top-left, bottom-right, or bottom-left.
+; X11 usually honours the requested placement. Wayland compositors may reposition windows.
+position=top-right
+background=#20232b
+foreground=#f1f2f6
+border=#454b59
